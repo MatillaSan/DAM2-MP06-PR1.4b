@@ -2,6 +2,7 @@ package com.project;
 
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
@@ -25,13 +26,13 @@ public class Main {
             System.out.println(booksMap);
 
             // Ejercicio 1
-            metodos.modificarJson(jsonArray);
+            jsonArray = metodos.modificarJson(jsonArray);
 
             // Ejercicio 2
-            metodos.agregarDatos(jsonArray);
+            jsonArray = metodos.agregarDatos(jsonArray);
 
             // Ejercicio 3
-            metodos.borrarDatos(jsonArray);
+            jsonArray = metodos.borrarDatos(jsonArray);
 
             // Ejercicio 4
             metodos.guardarDatos(jsonArray);
@@ -62,7 +63,7 @@ public class Main {
         return booksMap;
     }
 
-    public void modificarJson(JsonArray jsonArray) {
+    public JsonArray modificarJson(JsonArray jsonArray) {
         for (JsonObject jsonObject : jsonArray.getValuesAs(JsonObject.class)) {
 
             if (jsonObject.getInt("id") == 1) {
@@ -71,10 +72,17 @@ public class Main {
                         .build();
             }
         }
+
+        return jsonArray;
     }
 
-    public void agregarDatos(JsonArray jsonArray) {
+    public JsonArray agregarDatos(JsonArray jsonArray) {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+
+        for (JsonObject jsonObject : jsonArray.getValuesAs(JsonObject.class)) {
+            jsonArrayBuilder.add(jsonObject);
+        }
 
         jsonObjectBuilder
                 .add("id", 4)
@@ -82,19 +90,23 @@ public class Main {
                 .add("autor", "Miquel Soler")
                 .add("any", 2022);
 
-        jsonArray.add(jsonObjectBuilder.build());
+        jsonArrayBuilder.add(jsonObjectBuilder.build());
+        jsonArray = jsonArrayBuilder.build();
+
+        return jsonArray;
     }
 
-    public void borrarDatos(JsonArray jsonArray) {
-        int index = 0;
+    public JsonArray borrarDatos(JsonArray jsonArray) {
+        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+
         for (JsonObject jsonObject : jsonArray.getValuesAs(JsonObject.class)) {
-
-            if (jsonObject.getInt("id") == 2) {
-                jsonArray.remove(index);
-            }
-
-            index++;
+            if (jsonObject.getInt("id") != 2)
+                jsonArrayBuilder.add(jsonObject);
         }
+
+        jsonArray = jsonArrayBuilder.build();
+
+        return jsonArray;
     }
 
     public void guardarDatos(JsonArray jsonArray) {
